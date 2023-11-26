@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { PUBLIC_MAPBOX_TOKEN } from '$env/static/public';
-	import { Map, Geocoder, Marker, controls } from '@beyonk/svelte-mapbox';
+	import { Map, Geocoder, controls } from '@beyonk/svelte-mapbox';
 	import Parking from './_Parking.svelte';
 
 	const { GeolocateControl } = controls;
@@ -9,7 +9,7 @@
 
 	function eventHandler(e) {
 		const data = e.detail;
-		console.log(data);
+		mapComponent.flyTo({ center: data.result.center, zoom: 17 });
 	}
 
 	export let data;
@@ -21,7 +21,7 @@
 		accessToken={PUBLIC_MAPBOX_TOKEN}
 		style="mapbox://styles/mapbox/streets-v12"
 		center={[-74.031, 40.71]}
-		zoom={13}
+		zoom={12.5}
 		on:ready={(e) => {
 			console.log('ready');
 			mapComponent.resize();
@@ -29,8 +29,12 @@
 	>
 		<GeolocateControl
 			position="bottom-left"
-			options={{ showUserLocation: false }}
-			on:eventname={eventHandler}
+			options={{
+				showUserLocation: false,
+				fitBoundsOptions: {
+					zoom: 17
+				}
+			}}
 		/>
 		<Geocoder
 			accessToken={PUBLIC_MAPBOX_TOKEN}
@@ -38,10 +42,6 @@
 			options={{ proximity: { latitude: 40.71, longitude: -74.031 } }}
 		/>
 		<Parking features={data.parkingSpots} />
-		<!-- {#each data.parkingSpots as spot}
-			<Marker lat={spot.lat} lng={spot.lng} label={spot.label} color={spot.color}>
-			</Marker>
-		{/each} -->
 	</Map>
 </div>
 

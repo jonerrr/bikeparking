@@ -42,6 +42,7 @@
 			options={{ proximity: { latitude: 40.71, longitude: -74.031 } }}
 		/>
 		<Parking features={data.parkingSpots} />
+		<!-- <Poles /> -->
 	</Map>
 </div>
 

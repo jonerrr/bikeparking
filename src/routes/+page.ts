@@ -86,8 +86,11 @@ export async function load({ fetch }) {
 		loadGeodata(
 			fetch,
 			'https://data.cityofnewyork.us/api/geospatial/yh4a-g3fj?method=export&format=GeoJSON'
-		)
+		),
+		async () => {
+			await (await fetch('/poles.json')).json();
+		}
 	]).then((r) => {
-		return { parkingSpots: [...r[0], ...r[1]] };
+		return { parkingSpots: [...r[0], ...r[1]], ...r[2] };
 	});
 }

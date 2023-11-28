@@ -1,4 +1,4 @@
-import { parse, stringify } from 'csv/sync';
+import { parse } from 'csv/sync';
 import fs from 'fs';
 import proj4 from 'proj4';
 
@@ -7,10 +7,10 @@ const firstProjection =
 	'+proj=lcc +lat_1=41.03333333333333 +lat_2=40.66666666666666 +lat_0=40.16666666666666 +lon_0=-74 +x_0=300000.0000000001 +y_0=0 +ellps=GRS80 +datum=NAD83 +to_meter=0.3048006096012192 +no_defs';
 // https://spatialreference.org/ref/epsg/wgs-84/
 const secondProjection = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
-const conv = proj4(firstProjection, secondProjection, [982218, 184999]);
+// const conv = proj4(firstProjection, secondProjection, [1007537, 260795]);
 
-console.log(`${conv[1]}, ${conv[0]}`);
-
+// console.log(`${conv[1]}, ${conv[0]}`);
+// process.exit(0);
 (async () => {
 	// change date to latest update whenever running
 	console.log('fetching data');
@@ -57,9 +57,10 @@ console.log(`${conv[1]}, ${conv[0]}`);
 		parsed.push({
 			type: 'Feature',
 			properties: {
+				label: row[21] === 'POLE' ? 'Pole' : 'Drive Rail',
 				description: row[13]
 			},
-			geomertry: {
+			geometry: {
 				type: 'Point',
 				coordinates: [lng, lat]
 			}

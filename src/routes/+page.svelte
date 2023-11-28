@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { PUBLIC_MAPBOX_TOKEN } from '$env/static/public';
 	import { Map, Geocoder, controls } from '@beyonk/svelte-mapbox';
-	import Parking from './_Parking.svelte';
+	import Rack from './_Rack.svelte';
 
 	const { GeolocateControl } = controls;
 
@@ -20,29 +20,28 @@
 		bind:this={mapComponent}
 		accessToken={PUBLIC_MAPBOX_TOKEN}
 		style="mapbox://styles/mapbox/streets-v12"
-		center={[-74.031, 40.71]}
+		center={[-73.95, 40.69]}
 		zoom={12.5}
-		on:ready={(e) => {
-			console.log('ready');
-			mapComponent.resize();
-		}}
 	>
 		<GeolocateControl
 			position="bottom-left"
 			options={{
-				showUserLocation: false,
+				showUserLocation: true,
+				showUserHeading: true,
 				fitBoundsOptions: {
 					zoom: 17
 				}
 			}}
 		/>
 		<Geocoder
+			geocoder
 			accessToken={PUBLIC_MAPBOX_TOKEN}
 			on:result={eventHandler}
 			options={{ proximity: { latitude: 40.71, longitude: -74.031 } }}
 		/>
-		<Parking features={data.parkingSpots} />
-		<!-- <Poles /> -->
+		{#each Object.keys(data) as rack}
+			<Rack name={rack} features={data[rack]} />
+		{/each}
 	</Map>
 </div>
 

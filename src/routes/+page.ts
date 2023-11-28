@@ -1,3 +1,4 @@
+import pako from 'pako';
 interface Parking {
 	[key: string]: {
 		type: string;
@@ -17,7 +18,10 @@ export async function load({ fetch }) {
 			'https://data.cityofnewyork.us/api/geospatial/yh4a-g3fj?method=export&format=GeoJSON'
 		)
 	).json();
-	const poles = await (await fetch('/poles.json')).json();
+	// I need to make a gzip because cloudflare pages doesn't accept files bigger than 26.2mb
+	const poles = JSON.parse(
+		pako.inflate(await (await fetch('/poles.json.zz')).arrayBuffer(), { to: 'string' })
+	);
 	const parking: Parking = {};
 	parking['Shelter'] = shelters.features.map((f: any) => {
 		return {

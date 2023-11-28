@@ -1,6 +1,7 @@
 import { parse } from 'csv/sync';
 import fs from 'fs';
 import proj4 from 'proj4';
+import pako from 'pako';
 
 // https://www.spatialreference.org/ref/epsg/nad83-new-york-long-island-ftus/
 const firstProjection =
@@ -72,5 +73,5 @@ const secondProjection = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
 	// 	'poles.geojson',
 	// 	JSON.stringify({ type: 'FeatureCollection', features: parsed })
 	// );
-	fs.writeFileSync('poles.json', JSON.stringify(parsed));
+	fs.writeFileSync('poles.json.gz', pako.deflate(JSON.stringify(parsed)));
 })();

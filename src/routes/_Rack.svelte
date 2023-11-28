@@ -47,6 +47,9 @@
 			//   * Pink, 40px circles when point count is greater than or equal to 750
 			'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
 			'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+		},
+		layout: {
+			visibility: 'visible'
 		}
 	});
 
@@ -58,7 +61,8 @@
 		layout: {
 			'text-field': ['get', 'point_count_abbreviated'],
 			'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-			'text-size': 12
+			'text-size': 12,
+			visibility: 'visible'
 		}
 	});
 
@@ -72,6 +76,9 @@
 			'circle-radius': 7,
 			'circle-stroke-width': 1,
 			'circle-stroke-color': '#fff'
+		},
+		layout: {
+			visibility: 'visible'
 		}
 	});
 

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { contextKey } from '@beyonk/svelte-mapbox';
+	import { invisibleLayers } from '$lib/stores';
 
 	const { getMap, getMapbox }: { getMap: any; getMapbox: any } = getContext(contextKey);
 	const map = getMap();
@@ -21,7 +22,6 @@
 
 	export let features;
 	export let name: string;
-	console.log(features.length);
 
 	map.addSource(name, {
 		type: 'geojson',
@@ -49,7 +49,7 @@
 			'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
 		},
 		layout: {
-			visibility: 'visible'
+			visibility: $invisibleLayers.includes(name) ? 'none' : 'visible'
 		}
 	});
 
@@ -62,7 +62,7 @@
 			'text-field': ['get', 'point_count_abbreviated'],
 			'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
 			'text-size': 12,
-			visibility: 'visible'
+			visibility: $invisibleLayers.includes(name) ? 'none' : 'visible'
 		}
 	});
 
@@ -78,7 +78,7 @@
 			'circle-stroke-color': '#fff'
 		},
 		layout: {
-			visibility: 'visible'
+			visibility: $invisibleLayers.includes(name) ? 'none' : 'visible'
 		}
 	});
 

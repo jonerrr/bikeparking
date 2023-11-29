@@ -3,6 +3,7 @@
 	import { Map, Geocoder, controls } from '@beyonk/svelte-mapbox';
 	import Rack from './_Rack.svelte';
 	import ToggleLayer from './_ToggleLayer.svelte';
+	import { center, zoom } from '$lib/stores';
 
 	const { GeolocateControl } = controls;
 
@@ -46,8 +47,16 @@
 		on:ready={() => (mapReady = true)}
 		accessToken={PUBLIC_MAPBOX_TOKEN}
 		style="mapbox://styles/mapbox/streets-v12"
-		center={[-73.95, 40.69]}
-		zoom={12.5}
+		bind:center={$center}
+		bind:zoom={$zoom}
+		on:dragend={(e) => {
+			//@ts-ignore
+			center.set([e.detail.center.lng, e.detail.center.lat]);
+		}}
+		on:zoomend={(e) => {
+			//@ts-ignore
+			zoom.set(e.detail.zoom);
+		}}
 	>
 		<GeolocateControl
 			position="bottom-left"
@@ -62,7 +71,10 @@
 		<Geocoder
 			geocoder
 			accessToken={PUBLIC_MAPBOX_TOKEN}
-			on:result={(e) => mapComponent.flyTo({ center: e.detail.result.center, zoom: 17 })}
+			on:result={(e) => {
+				//@ts-ignore
+				mapComponent.flyTo({ center: e.detail.result.center, zoom: 17 });
+			}}
 			options={{ proximity: { latitude: 40.71, longitude: -74.031 } }}
 		/>
 		{#each rack_types as rack}

@@ -1,22 +1,32 @@
 <script lang="ts">
+	import { invisibleLayers } from '$lib/stores';
+
 	export let layer: string;
 	export let map: any;
-
-	let visible: boolean = true;
-	// TODO: save state in localstorage
 </script>
 
 <button
 	on:click={(e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		map.setLayoutProperty(`clusters-${layer}`, 'visibility', visible ? 'none' : 'visible');
-		map.setLayoutProperty(`clusters-${layer}-count`, 'visibility', visible ? 'none' : 'visible');
-		map.setLayoutProperty(`unclustered-point-${layer}`, 'visibility', visible ? 'none' : 'visible');
 
-		visible = !visible;
+		const visibility = $invisibleLayers.includes(layer) ? 'visible' : 'none';
+
+		map.setLayoutProperty(`clusters-${layer}`, 'visibility', visibility);
+		map.setLayoutProperty(`clusters-${layer}-count`, 'visibility', visibility);
+		map.setLayoutProperty(`unclustered-point-${layer}`, 'visibility', visibility);
+
+		invisibleLayers.update((layers) => {
+			if (layers.includes(layer)) {
+				return layers.filter((l) => l !== layer);
+			} else {
+				return [...layers, layer];
+			}
+		});
 	}}
-	style={visible ? 'background-color: #3887be' : 'background-color: #3074a4'}
+	style={$invisibleLayers.includes(layer)
+		? 'background-color: #3887be'
+		: 'background-color: #3074a4'}
 	class="button-1">{layer}</button
 >
 

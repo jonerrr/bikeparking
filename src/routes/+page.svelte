@@ -102,6 +102,9 @@
 		border: 1px solid rgba(0, 0, 0, 0.4);
 		margin: 0;
 		padding: 1em 0.5em;
+		user-select: none;
+		-webkit-user-select: none;
+		touch-action: manipulation;
 	}
 
 	svg {

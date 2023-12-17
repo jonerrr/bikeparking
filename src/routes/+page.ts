@@ -8,16 +8,8 @@ interface Parking {
 }
 
 export async function load({ fetch }) {
-	const shelters = await (
-		await fetch(
-			'https://data.cityofnewyork.us/api/geospatial/thbt-gfu9?method=export&format=GeoJSON'
-		)
-	).json();
-	const racks = await (
-		await fetch(
-			'https://data.cityofnewyork.us/api/geospatial/yh4a-g3fj?method=export&format=GeoJSON'
-		)
-	).json();
+	const shelters = await (await fetch('/shelters.geojson')).json();
+	const racks = await (await fetch('/parking.geojson')).json();
 	// I need to make a gzip because cloudflare pages doesn't accept files bigger than 26.2mb
 	const poles = JSON.parse(
 		pako.inflate(await (await fetch('/poles.json.zz')).arrayBuffer(), { to: 'string' })

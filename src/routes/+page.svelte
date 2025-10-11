@@ -17,6 +17,7 @@
 	import { tick } from 'svelte';
 	import Geo from '$lib/geocoder';
 	import rack_mapping from '$lib/assets/rack_mapping.json';
+	import { slide } from 'svelte/transition';
 
 	const allRackTypes = rack_mapping.map(({ category }) => category);
 	const layerNames = rack_mapping.map(({ category }) => category.replace(/[^a-z0-9]/gi, ''));
@@ -99,7 +100,8 @@
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 20 20"
 			fill="currentColor"
-			class={`h-4 w-4 transition ${legendOpen ? 'rotate-180' : ''}`}
+			class="h-4 w-4 transition"
+			class:rotate-180={legendOpen.current}
 		>
 			<path
 				fill-rule="evenodd"
@@ -112,6 +114,7 @@
 	{#if legendOpen.current}
 		<div
 			class="pointer-events-auto flex w-full flex-col gap-3 rounded-md bg-white/90 p-3 shadow-lg backdrop-blur"
+			transition:slide
 		>
 			<div class="flex items-center justify-between text-xs font-medium text-slate-500">
 				<button class="rounded px-2 py-1 hover:bg-slate-100" onclick={selectAllCategories}

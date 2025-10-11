@@ -5,14 +5,18 @@
 		GeolocateControl,
 		CircleLayer,
 		Popup,
-		FeatureState
+		FeatureState,
+		CustomControl
 	} from 'svelte-maplibre-gl';
 	import maplibregl from 'maplibre-gl';
 	import { PMTilesProtocol } from '@svelte-maplibre-gl/pmtiles';
+	import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder';
+	import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 	import { PersistedState } from 'runed';
 	import { asset } from '$app/paths';
-	import rack_mapping from '$lib/assets/rack_mapping.json';
 	import { tick } from 'svelte';
+	import Geo from '$lib/geocoder';
+	import rack_mapping from '$lib/assets/rack_mapping.json';
 
 	const allRackTypes = rack_mapping.map(({ category }) => category);
 	const layerNames = rack_mapping.map(({ category }) => category.replace(/[^a-z0-9]/gi, ''));
@@ -54,6 +58,16 @@
 	const clearCategories = () => {
 		selectedCategories.current = [];
 	};
+
+	const geocoderControl = new MaplibreGeocoder(Geo, {
+		maplibregl,
+		showResultsWhileTyping: true,
+		limit: 10
+	});
+
+	geocoderControl.on('error', (event) => {
+		console.warn('Geocoder error', event?.error);
+	});
 
 	// TODO: improve placement
 	const streetviewUrl = (lat: number, lng: number, heading = 0, pitch = 0) =>
@@ -148,6 +162,8 @@
 		positionOptions={{ enableHighAccuracy: true }}
 		autoTrigger={true}
 	/>
+
+	<CustomControl control={geocoderControl} position="top-left" />
 
 	<VectorTileSource url={`pmtiles://${asset('/data.pmtiles')}`}>
 		<!-- <CircleLayer

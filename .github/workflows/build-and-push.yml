@@ -1,0 +1,44 @@
+name: Build and push Docker image
+
+# Turns out on release does not actually run on release. thanks microsoft
+# See https://github.com/orgs/community/discussions/25281
+# on:
+#   release:
+#     types: [published]
+on:
+  workflow_run:
+    workflows: ["Bump Version and Create Release"]
+    types:
+      - completed
+
+jobs:
+  build-and-push:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Get Release Tag
+        id: get_tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG=$(gh release view --json tagName -q .tagName)
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/bikeparking:latest
+            ghcr.io/${{ github.repository_owner }}/bikeparking:${{ env.TAG }}

@@ -1,0 +1,52 @@
+name: Bump Version and Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        required: true
+        default: "patch"
+        description: "Bump type"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  packages: write
+  contents: write
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+
+      - name: Bump version
+        id: bump_version
+        run: |
+          git config --global user.name 'Jonah'
+          git config --global user.email '73760377+jonerrr@users.noreply.github.com'
+          pnpm version ${{ github.event.inputs.type }} -m "ci: bump version to %s"
+          echo "VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
+
+      - name: Push changes
+        run: |
+          git push origin main --follow-tags
+
+      - name: Create a Release
+        uses: elgohr/Github-Release-Action@v5
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          title: ${{ env.VERSION }}
+          tag: ${{ env.VERSION }}

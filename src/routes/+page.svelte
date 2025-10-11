@@ -87,33 +87,10 @@
 	});
 </script>
 
-<div
-	class="pointer-events-none absolute top-4 right-4 z-20 flex max-w-xs flex-col items-end gap-2 text-sm"
->
-	<button
-		class="pointer-events-auto flex items-center gap-2 rounded-md bg-white/90 px-3 py-2 font-semibold text-slate-700 shadow-md transition hover:bg-white"
-		aria-expanded={legendOpen.current}
-		onclick={() => (legendOpen.current = !legendOpen.current)}
-	>
-		<span>Layers & Legend</span>
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			viewBox="0 0 20 20"
-			fill="currentColor"
-			class="h-4 w-4 transition"
-			class:rotate-180={legendOpen.current}
-		>
-			<path
-				fill-rule="evenodd"
-				d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
-				clip-rule="evenodd"
-			/>
-		</svg>
-	</button>
-
+<div class="pointer-events-none absolute right-4 bottom-4 z-20 text-sm">
 	{#if legendOpen.current}
 		<div
-			class="pointer-events-auto flex w-full flex-col gap-3 rounded-md bg-white/90 p-3 shadow-lg backdrop-blur"
+			class="pointer-events-auto mb-2 flex max-w-xs flex-col gap-3 rounded-md bg-white/90 p-3 shadow-lg backdrop-blur"
 			transition:slide
 		>
 			<div class="flex items-center justify-between text-xs font-medium text-slate-500">
@@ -141,6 +118,27 @@
 			</ul>
 		</div>
 	{/if}
+
+	<button
+		class="pointer-events-auto flex items-center gap-2 rounded-md bg-white/90 px-3 py-2 font-semibold text-slate-700 shadow-md transition hover:bg-white"
+		aria-expanded={legendOpen.current}
+		onclick={() => (legendOpen.current = !legendOpen.current)}
+	>
+		<span>Layers & Legend</span>
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 20 20"
+			fill="currentColor"
+			class="h-4 w-4 transition"
+			class:rotate-180={!legendOpen.current}
+		>
+			<path
+				fill-rule="evenodd"
+				d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+				clip-rule="evenodd"
+			/>
+		</svg>
+	</button>
 </div>
 
 <PMTilesProtocol />

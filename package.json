@@ -43,6 +43,8 @@
 		"vite": "^7.1.7"
 	},
 	"dependencies": {
-		"runed": "^0.34.0"
+		"@maplibre/maplibre-gl-geocoder": "^1.9.1",
+		"runed": "^0.34.0",
+		"wrangler": "^4.42.2"
 	}
 }

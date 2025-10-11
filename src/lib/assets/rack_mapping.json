@@ -1,0 +1,13 @@
+[
+	{ "category": "Bike Corral", "color": "#8DD3C7" },
+	{ "category": "Drive Rail", "color": "#FFFFB3" },
+	{ "category": "Large Hoop", "color": "#BEBADA" },
+	{ "category": "Opal Rack", "color": "#FB8072" },
+	{ "category": "Other", "color": "#80B1D3" },
+	{ "category": "Shelter", "color": "#FDB462" },
+	{ "category": "Sled", "color": "#B3DE69" },
+	{ "category": "Small Hoop", "color": "#FCCDE5" },
+	{ "category": "Staple", "color": "#D9D9D9" },
+	{ "category": "U-Rack", "color": "#BC80BD" },
+	{ "category": "Wave Rack", "color": "#CCEBC5" }
+]

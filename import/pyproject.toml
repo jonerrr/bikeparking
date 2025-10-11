@@ -1,0 +1,13 @@
+[project]
+name = "import"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "ipykernel>=6.30.1",
+    "lonboard>=0.12.1",
+    "palettable>=3.3.3",
+    "polars-st>=0.4.0",
+    "requests>=2.32.5",
+]

@@ -27,12 +27,17 @@
 	let cursor = $state('default');
 	let bearing = $state(0);
 	let pitch = $state(0);
+	let zoom = $state(12);
 
 	let clickedFeature: maplibregl.MapGeoJSONFeature | undefined = $state.raw();
 	let lnglat = $state.raw(new maplibregl.LngLat(0, 0));
-
 	let legendOpen = new PersistedState('legendOpen', true);
-	let selectedCategories = new PersistedState('selectedCategories', [...allRackTypes]);
+	// drive rails technically not bike racks and theres a lot of them
+	//  so default to offq
+	let selectedCategories = new PersistedState(
+		'selectedCategories',
+		allRackTypes.filter((r) => r !== 'Drive Rail')
+	);
 
 	const selectedLayers = $derived(
 		selectedCategories.current.map((category) => category.replace(/[^a-z0-9]/gi, ''))
@@ -70,13 +75,17 @@
 		console.warn('Geocoder error', event?.error);
 	});
 
-	// TODO: improve placement
-	const streetviewUrl = (lat: number, lng: number, heading = 0, pitch = 0) =>
-		`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}&heading=${heading}&pitch=${pitch}&fov=90`;
+	// // TODO: improve placement
+	// const streetviewUrl = (lat: number, lng: number, heading = 0, pitch = 0) =>
+	// 	`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}&heading=${heading}&pitch=${pitch}&fov=90`;
 
-	const popupHeading = () => {
-		return Math.round(((bearing % 360) + 360) % 360);
-	};
+	// 	`https://www.google.com/maps/@${lat},${lng},${zoom}z`;
+	const mapsUrl = (lat: number, lng: number) =>
+		`https://www.google.com/maps/search/?api=1&query=${lat},${lng}&zoom=${Math.round(zoom)}`;
+
+	// const popupHeading = () => {
+	// 	return Math.round(((bearing % 360) + 360) % 360);
+	// };
 
 	$effect(() => {
 		if (!clickedFeature) return;
@@ -87,7 +96,7 @@
 	});
 </script>
 
-<div class="pointer-events-none absolute right-4 bottom-4 z-20 text-sm">
+<div class="pointer-events-none absolute right-4 bottom-2 z-20 text-sm">
 	{#if legendOpen.current}
 		<div
 			class="pointer-events-auto mb-2 flex max-w-xs flex-col gap-3 rounded-md bg-white/90 p-3 shadow-lg backdrop-blur"
@@ -147,6 +156,7 @@
 	bind:map
 	bind:bearing
 	bind:pitch
+	bind:zoom
 	attributionControl={false}
 	style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
 	center={[-74.006, 40.7128]}
@@ -164,7 +174,7 @@
 		autoTrigger={true}
 	/>
 
-	<CustomControl control={geocoderControl} position="top-left" />
+	<CustomControl control={geocoderControl} position="top-right" />
 
 	<VectorTileSource url={`pmtiles://${asset('/data.pmtiles')}`}>
 		<!-- <CircleLayer
@@ -201,12 +211,13 @@
 							18,
 							['case', ['boolean', ['feature-state', 'click'], false], 20, 12]
 						],
-						'circle-color': [
-							'case',
-							['boolean', ['feature-state', 'click'], false],
-							'#FF4136',
-							['get', 'color']
-						],
+						// 'circle-color': [
+						// 	'case',
+						// 	['boolean', ['feature-state', 'click'], false],
+						// 	'#FF4136',
+						// 	['get', 'color']
+						// ],
+						'circle-color': ['get', 'color'],
 						'circle-stroke-width': [
 							'interpolate',
 							['linear'],
@@ -216,7 +227,7 @@
 							18,
 							['case', ['boolean', ['feature-state', 'click'], false], 3, 0]
 						],
-						'circle-stroke-color': '#ffffff',
+						'circle-stroke-color': '#DDDDDD',
 						'circle-opacity': 1
 					}}
 					onmousemove={(ev) => {
@@ -244,10 +255,12 @@
 						<FeatureState sourceLayer={layer} id={clickedFeature.id} state={{ click: true }} />
 						<Popup {lnglat} closeButton={false} onclose={() => (clickedFeature = undefined)}>
 							{#each Object.entries(clickedFeature.properties) as [key, value]}
-								<p><strong>{key}:</strong> {value}</p>
+								{#if key !== 'color'}
+									<p><strong>{key}:</strong> {value}</p>
+								{/if}
 							{/each}
 
-							<p>
+							<!-- <p>
 								<a
 									class="text-blue-600 underline hover:text-blue-800"
 									target="_blank"
@@ -255,6 +268,17 @@
 									href={streetviewUrl(lnglat.lat, lnglat.lng, popupHeading())}
 								>
 									Google Street View
+								</a>
+							</p> -->
+
+							<p>
+								<a
+									class="text-blue-600 underline hover:text-blue-800"
+									target="_blank"
+									rel="noopener noreferrer"
+									href={mapsUrl(lnglat.lat, lnglat.lng)}
+								>
+									Google Maps
 								</a>
 							</p>
 						</Popup>
